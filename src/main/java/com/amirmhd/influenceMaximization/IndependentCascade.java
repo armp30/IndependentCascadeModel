@@ -9,7 +9,7 @@ import org.jgrapht.graph.DirectedPseudograph;
 import java.util.*;
 
 public class IndependentCascade {
-    DirectedMultigraph<String,RelationshipEdge> graph;
+    DirectedMultigraph<String, RelationshipEdge> graph;
     Set<String> seeds;
     long nodeCount;
 
@@ -23,7 +23,7 @@ public class IndependentCascade {
         }
         this.graph = (DirectedMultigraph) graph.clone();
 
-        this.graph.edgeSet().forEach(e ->  {
+        this.graph.edgeSet().forEach(e -> {
             e.setProbability(0.1d);
         });
 
@@ -35,8 +35,8 @@ public class IndependentCascade {
 
     private boolean propSuccess(RelationshipEdge e) {
         double probability = e.getProbability();
-        if( probability>1 ){
-            probability=1;
+        if (probability > 1) {
+            probability = 1;
             e.setProbability(1);
         }
         return new Random().nextDouble() <= probability;
@@ -46,14 +46,13 @@ public class IndependentCascade {
         Set<String> activatedNodesOfThisRound = new HashSet<>();
         Set<RelationshipEdge> currentTriedEdges = new HashSet<>();
         for (String s : seeds) {
-            graph.outgoingEdgesOf(s).forEach(e ->  {
-                if (seeds.contains(e.getTarget()) || triedEdges.contains(e) || currentTriedEdges.contains(e)) {
-                }else {
-                    if (propSuccess(e))
-                        activatedNodesOfThisRound.add((String) e.getTarget());
-                    currentTriedEdges.add(e);
-                }
-            });
+            for (RelationshipEdge e : graph.outgoingEdgesOf(s)) {
+                if (seeds.contains(e.getTarget()) || triedEdges.contains(e) || currentTriedEdges.contains(e))
+                    continue;
+                if (propSuccess(e))
+                    activatedNodesOfThisRound.add((String) e.getTarget());
+                currentTriedEdges.add(e);
+            }
         }
         triedEdges.addAll(currentTriedEdges);
         seeds.addAll(activatedNodesOfThisRound);
@@ -61,6 +60,7 @@ public class IndependentCascade {
     }
 
     public List<Set<String>> diffuseKRounds(int steps) {
+
         Set<RelationshipEdge> triedEdges = new HashSet<>();
         List<Set<String>> layers = new ArrayList<>();
         layers.add(seeds);
@@ -75,15 +75,13 @@ public class IndependentCascade {
 
     public int diffuseKRoundsNumber(int steps) {
         Set<RelationshipEdge> triedEdges = new HashSet<>();
-        List<String> layers = new ArrayList<>();
-        layers.addAll(seeds);
         for (int i = 0; i < steps && seeds.size() < nodeCount; i++) {
             int oldSize = seeds.size();
-            layers.addAll(diffuseOneRound(triedEdges));
+            diffuseOneRound(triedEdges);
             if (seeds.size() == oldSize)
                 break;
         }
-        return layers.size();
+        return seeds.size();
     }
 
     public List<Set<String>> diffuseAll() {

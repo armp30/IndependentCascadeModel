@@ -87,7 +87,7 @@ public class Test {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            double b = values.stream().mapToInt(a->a).sum();
+            double b = values.stream().mapToInt(a->a).sum()/montecarloSimulations;
             propagation.put(node, b);
             Files.writeString(fileName, node + "," +Double.toString(b) + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             System.out.println(node + " : " +(System.currentTimeMillis()-startTime)/1000);
