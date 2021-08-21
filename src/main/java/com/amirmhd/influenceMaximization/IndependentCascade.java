@@ -1,12 +1,14 @@
 package com.amirmhd.influenceMaximization;
 
-import com.amirmhd.influenceMaximization.Exception.GraphMismatchException;
 import com.amirmhd.influenceMaximization.Exception.InvalidActivationValueException;
 import com.amirmhd.influenceMaximization.Exception.SeedNotFoundException;
 import org.jgrapht.graph.DirectedMultigraph;
-import org.jgrapht.graph.DirectedPseudograph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class IndependentCascade {
     DirectedMultigraph<String, RelationshipEdge> graph;
@@ -39,7 +41,7 @@ public class IndependentCascade {
             probability = 1;
             e.setProbability(1);
         }
-        return new Random().nextDouble() <= probability;
+        return ThreadLocalRandom.current().nextDouble() <= probability;
     }
 
     public Set<String> diffuseOneRound(Set<RelationshipEdge> triedEdges) {

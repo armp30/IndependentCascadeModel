@@ -16,12 +16,10 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class Test {
-    public static void main(String[] args) throws IOException, InvalidActivationValueException, SeedNotFoundException, GraphMismatchException {
+    public static void main(String[] args) throws IOException, InvalidActivationValueException, SeedNotFoundException, GraphMismatchException, InterruptedException {
         DirectedMultigraph<String, RelationshipEdge> graph = new DirectedMultigraph<>(RelationshipEdge.class);
         JFileChooser fileChooser = new JFileChooser("/home/arm/PycharmProjects/article1/datasets/txt");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -62,18 +60,17 @@ public class Test {
 
         int n=0;
         for (String node : nodes) {
-            ExecutorService executor = Executors.newFixedThreadPool(4);
+            ExecutorService executor = Executors.newWorkStealingPool(4);
             Set<Callable<String>> callables = new HashSet<>();
             HashSet<String> seeds = new HashSet<>();
             seeds.add(node);
             List<Integer> values = new ArrayList<>();
-
+            System.out.println(node+" ----------");
             for (int i = 0; i < montecarloSimulations; i++) {
                 callables.add(() -> {
                     try {
                         IndependentCascade independentCascade = new IndependentCascade(graph, seeds);
                         values.add(independentCascade.diffuseKRoundsNumber(steps));
-
                     } catch (SeedNotFoundException e) {
                         e.printStackTrace();
                     } catch (InvalidActivationValueException e) {
@@ -86,13 +83,21 @@ public class Test {
                 executor.invokeAll(callables);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                executor.shutdownNow();
+                if (!executor.isShutdown())
+                    executor.awaitTermination(1, TimeUnit.MINUTES);
             }
             double b = values.stream().mapToInt(a->a).sum()/montecarloSimulations;
             propagation.put(node, b);
-            Files.writeString(fileName, node + "," +Double.toString(b) + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            System.out.println(node + " : " +(System.currentTimeMillis()-startTime)/1000);
-            if(n++%50==0)
-                Files.writeString(fileName,"Time : " + (System.currentTimeMillis()-startTime)/1000 + " s" + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            Files.writeString(fileName, node + "," + b + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            if(++n%1==0){
+                long time = (System.currentTimeMillis()-startTime)/1000;
+                System.out.println("Elapsed : " +time);
+                System.out.println("Remaining : " + (time/n)*(nodes.size()-n));
+            }
+//            if(++n%50==0)
+//                Files.writeString(fileName,"Time : " + (System.currentTimeMillis()-startTime)/1000 + " s" + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         }
         Files.writeString(fileName,"Execution Time : " + (System.currentTimeMillis()-startTime)/1000 + " s" + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 

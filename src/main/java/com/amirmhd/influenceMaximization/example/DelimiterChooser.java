@@ -35,6 +35,7 @@ class DelimiterChooser extends JFrame implements ActionListener {
         setSize(300, 400);
         setLayout(null);
         setVisible(true);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -51,4 +52,6 @@ class DelimiterChooser extends JFrame implements ActionListener {
     public char getDelimiter() {
         return delimiter;
     }
+
+
 }
