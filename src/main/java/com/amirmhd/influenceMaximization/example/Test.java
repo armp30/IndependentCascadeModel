@@ -52,11 +52,11 @@ public class Test {
         HashMap<String, Double> propagation = new HashMap<>();
         int montecarloSimulations = 100;
         int steps = 100;
-        Files.writeString(fileName,"Start Time : " + (startTime)/1000 + " s" + System.lineSeparator());
-        Files.writeString(fileName,"Nodes : " + nodes.size() + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        Files.writeString(fileName,"Edges : " + graph.edgeSet().size() + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        Files.writeString(fileName,"MonteCarloSimulations : " + montecarloSimulations + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        Files.writeString(fileName,"Steps : " + steps + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        Files.writeString(fileName,"#Start Time : " + (startTime)/1000 + " s" + System.lineSeparator());
+        Files.writeString(fileName,"#Nodes : " + nodes.size() + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        Files.writeString(fileName,"#Edges : " + graph.edgeSet().size() + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        Files.writeString(fileName,"#MonteCarloSimulations : " + montecarloSimulations + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        Files.writeString(fileName,"#Steps : " + steps + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
         int n=0;
         for (String node : nodes) {
@@ -91,7 +91,7 @@ public class Test {
             double b = (double) values.stream().mapToInt(a->a).sum()/montecarloSimulations;
             propagation.put(node, b);
             Files.writeString(fileName, node + "," + b + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            if(++n%1==0){
+            if(++n%20==0){
                 long time = (System.currentTimeMillis()-startTime)/1000;
                 System.out.println("Elapsed : " +time);
                 System.out.println("Remaining : " + (time/n)*(nodes.size()-n));
@@ -99,7 +99,7 @@ public class Test {
 //            if(++n%50==0)
 //                Files.writeString(fileName,"Time : " + (System.currentTimeMillis()-startTime)/1000 + " s" + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         }
-        Files.writeString(fileName,"Execution Time : " + (System.currentTimeMillis()-startTime)/1000 + " s" + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        Files.writeString(fileName,"#Execution Time : " + (System.currentTimeMillis()-startTime)/1000 + " s" + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
 
     }
 }
