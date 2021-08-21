@@ -88,7 +88,7 @@ public class Test {
                 if (!executor.isShutdown())
                     executor.awaitTermination(1, TimeUnit.MINUTES);
             }
-            double b = values.stream().mapToInt(a->a).sum()/montecarloSimulations;
+            double b = (double) values.stream().mapToInt(a->a).sum()/montecarloSimulations;
             propagation.put(node, b);
             Files.writeString(fileName, node + "," + b + System.lineSeparator(),  StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             if(++n%1==0){
