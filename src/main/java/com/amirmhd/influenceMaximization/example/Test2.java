@@ -3,7 +3,6 @@ package com.amirmhd.influenceMaximization.example;
 import com.amirmhd.influenceMaximization.Exception.GraphMismatchException;
 import com.amirmhd.influenceMaximization.Exception.InvalidActivationValueException;
 import com.amirmhd.influenceMaximization.Exception.SeedNotFoundException;
-import com.amirmhd.influenceMaximization.IndependentCascade;
 import com.amirmhd.influenceMaximization.NewICModel;
 import com.amirmhd.influenceMaximization.RelationshipEdge;
 import org.jgrapht.graph.DirectedMultigraph;
@@ -13,11 +12,15 @@ import org.jgrapht.nio.csv.CSVImporter;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.file.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,9 +29,13 @@ import java.util.concurrent.TimeUnit;
 public class Test2 {
     public static void main(String[] args) throws IOException, InvalidActivationValueException, SeedNotFoundException, GraphMismatchException, InterruptedException {
         DirectedMultigraph<String, RelationshipEdge> graph = new DirectedMultigraph<>(RelationshipEdge.class);
-//        JFileChooser fileChooser = new JFileChooser("/home/arm/PycharmProjects/article1/datasets/txt");
-//        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//        fileChooser.showOpenDialog(null);
+
+        /*
+        JFileChooser fileChooser = new JFileChooser("/home/arm/PycharmProjects/article1/datasets/txt");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.showOpenDialog(null);
+        */
+
         File selectedFile = new File(args[0]);
 //        String path = selectedFile.getPath();
         String graphString = Files.readString(Path.of(selectedFile.getPath()));
